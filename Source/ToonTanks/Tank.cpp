@@ -9,12 +9,6 @@
 
 ATank::ATank() : ABasePawn()
 {
-	LeftTrackMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Left track"));
-	LeftTrackMesh->SetupAttachment(BaseMesh);
-
-	RightTrackMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Right track"));
-	RightTrackMesh->SetupAttachment(BaseMesh);
-	
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
 	SpringArmComp->SetupAttachment(RootComponent);
 
@@ -29,6 +23,8 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ATank::Move);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ATank::Turn);
+
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATank::Fire);
 }
 
 void ATank::BeginPlay()
@@ -40,18 +36,18 @@ void ATank::BeginPlay()
 void ATank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	if(!PlyerControllerRef)
+
+	if (!PlyerControllerRef)
 	{
 		return;
 	}
-	
+
 	FHitResult HitResult;
-	if(!PlyerControllerRef->GetHitResultUnderCursor(ECC_Visibility,false, OUT HitResult))
+	if (!PlyerControllerRef->GetHitResultUnderCursor(ECC_Visibility, false, OUT HitResult))
 	{
 		return;
 	}
-	
+
 	TurnTurret(HitResult.ImpactPoint);
 	DrawDebugSphere(
 		GetWorld(),
@@ -60,7 +56,7 @@ void ATank::Tick(float DeltaTime)
 		8,
 		FColor::Red,
 		false
-		);
+	);
 }
 
 void ATank::Move(float Value)

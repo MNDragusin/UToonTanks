@@ -26,10 +26,6 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components", meta= (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* LeftTrackMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components", meta= (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* RightTrackMesh;
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	class UCameraComponent* CameraComponent;
 	UPROPERTY(VisibleAnywhere, Category="Components")
@@ -46,7 +42,6 @@ private:
 	
 	void Move(float Value);
 	void Turn(float Value);
-
 	//members
 	APlayerController* PlyerControllerRef;
 };

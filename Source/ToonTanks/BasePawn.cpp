@@ -5,11 +5,12 @@
 
 #include "NavigationSystemTypes.h"
 #include "Components/CapsuleComponent.h"
+#include "Projectile.h"
 
 // Sets default values
 ABasePawn::ABasePawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Create CapsuleComp collider and make it the root component
@@ -19,18 +20,18 @@ ABasePawn::ABasePawn()
 	//Create new static meshes for the base and attach it to the RootComponent
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	BaseMesh->SetupAttachment(CapsuleComp);
-	
+
 	//Create new static meshes for the turret and attach it to the BaseMesh
-	TurretMesh =CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
+	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
 	TurretMesh->SetupAttachment(BaseMesh);
 
 	//Create new static mehs afor the gun and attach it to the TurretMesh
-	GunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunMesh"));
-	GunMesh->SetupAttachment(TurretMesh);
-	
+	//GunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunMesh"));
+	//GunMesh->SetupAttachment(TurretMesh);
+
 	//Create a spawn point of type USceneComponent and attach it to the Gun
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Point"));
-	ProjectileSpawnPoint->SetupAttachment(GunMesh);
+	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
 }
 
 // Called when the game starts or when spawned
@@ -55,5 +56,29 @@ void ABasePawn::TurnTurret(FVector LookAtTarget)
 	LookAtRotatation.Pitch = 0;
 	LookAtRotatation.Roll = 0;
 
-	TurretMesh->SetWorldRotation(LookAtRotatation,true);
+	TurretMesh->SetWorldRotation(LookAtRotatation, true);
+}
+
+void ABasePawn::Fire()
+{
+	const FVector ProjectileSpawnPosition = ProjectileSpawnPoint->GetComponentLocation();
+	UE_LOG(LogTemp, Warning, TEXT("[%s] - Spawn position: %s"), *GetOwner()->GetName(),
+	       *ProjectileSpawnPosition.ToString())
+
+	if (!ProjectileClass)
+	{
+		DrawDebugSphere(
+			GetWorld(),
+			ProjectileSpawnPosition,
+			32.f,
+			16,
+			FColor::Blue,
+			false,
+			3.f
+		);
+		return;
+	}
+
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnPosition,
+	                                                              ProjectileSpawnPoint->GetComponentRotation());
 }
