@@ -25,5 +25,17 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+private:
+	UPROPERTY(VisibleAnywhere, Category="Components")
+	class UProjectileMovementComponent* ProjectileMovementComp;
 
+	UPROPERTY(EditAnywhere)
+	float Damage = 20.f;
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UPROPERTY(EditAnywhere, Category="Combat")
+	UParticleSystem* HitPArticles;
 };

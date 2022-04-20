@@ -18,7 +18,9 @@ public:
 	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	void HandleDestruction();
+	APlayerController* GetTankPlayerController() const;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -43,5 +45,5 @@ private:
 	void Move(float Value);
 	void Turn(float Value);
 	//members
-	APlayerController* PlyerControllerRef;
+	APlayerController* TankPlyerController;
 };

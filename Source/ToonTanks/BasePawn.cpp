@@ -6,6 +6,7 @@
 #include "NavigationSystemTypes.h"
 #include "Components/CapsuleComponent.h"
 #include "Projectile.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABasePawn::ABasePawn()
@@ -61,24 +62,25 @@ void ABasePawn::TurnTurret(FVector LookAtTarget)
 
 void ABasePawn::Fire()
 {
-	const FVector ProjectileSpawnPosition = ProjectileSpawnPoint->GetComponentLocation();
-	UE_LOG(LogTemp, Warning, TEXT("[%s] - Spawn position: %s"), *GetOwner()->GetName(),
-	       *ProjectileSpawnPosition.ToString())
-
 	if (!ProjectileClass)
 	{
-		DrawDebugSphere(
-			GetWorld(),
-			ProjectileSpawnPosition,
-			32.f,
-			16,
-			FColor::Blue,
-			false,
-			3.f
-		);
+		UE_LOG(LogTemp, Warning, TEXT("[%s] - There is no projectile class assigned!"), *GetOwner()->GetName());
 		return;
 	}
 
-	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnPosition,
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass,
+	                                                              ProjectileSpawnPoint->GetComponentLocation(),
 	                                                              ProjectileSpawnPoint->GetComponentRotation());
+	Projectile->SetOwner(this);
+	
+}
+
+void ABasePawn::HandleDestruction()
+{
+	if(DestroyParticleSystem)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, DestroyParticleSystem, GetActorLocation(), GetActorRotation());	
+	}
+	
+	//TODO Visual / sound effect
 }

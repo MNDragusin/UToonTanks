@@ -27,23 +27,36 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATank::Fire);
 }
 
+void ATank::HandleDestruction()
+{
+	Super::HandleDestruction();
+
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
+}
+
+APlayerController* ATank::GetTankPlayerController() const
+{
+	return TankPlyerController;
+}
+
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	PlyerControllerRef = Cast<APlayerController>(GetController());
+	TankPlyerController = Cast<APlayerController>(GetController());
 }
 
 void ATank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!PlyerControllerRef)
+	if (!TankPlyerController)
 	{
 		return;
 	}
 
 	FHitResult HitResult;
-	if (!PlyerControllerRef->GetHitResultUnderCursor(ECC_Visibility, false, OUT HitResult))
+	if (!TankPlyerController->GetHitResultUnderCursor(ECC_Visibility, false, OUT HitResult))
 	{
 		return;
 	}

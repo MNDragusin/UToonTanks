@@ -20,6 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 	void TurnTurret(FVector LookAtTarget);
 	void Fire();
+	virtual void HandleDestruction();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components", meta= (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* BaseMesh;
@@ -40,4 +41,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Combat")
 	TSubclassOf<class AProjectile> ProjectileClass;
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* DestroyParticleSystem;
 };

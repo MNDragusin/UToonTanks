@@ -26,6 +26,13 @@ void ATower::Tick(float DeltaTime)
 	TurnTurret(Tank->GetActorLocation());
 }
 
+void ATower::HandleDestruction()
+{
+	Super::HandleDestruction();
+
+	Destroy();
+}
+
 void ATower::CheckFireCondition()
 {
 	if(IsTankInFireRange())
