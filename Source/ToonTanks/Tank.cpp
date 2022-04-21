@@ -4,6 +4,7 @@
 #include "Tank.h"
 
 #include "Camera/CameraComponent.h"
+#include "Camera/CameraShakeSourceComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -28,9 +29,10 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 }
 
 void ATank::HandleDestruction()
-{
+{	
 	Super::HandleDestruction();
-
+	bIsAlive = false;
+	
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
 }
@@ -38,6 +40,11 @@ void ATank::HandleDestruction()
 APlayerController* ATank::GetTankPlayerController() const
 {
 	return TankPlyerController;
+}
+
+bool ATank::IsTankAlive()
+{
+	return bIsAlive;
 }
 
 void ATank::BeginPlay()

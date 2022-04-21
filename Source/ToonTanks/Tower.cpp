@@ -3,6 +3,7 @@
 
 #include "Tower.h"
 #include "Tank.h"
+#include "../../Plugins/Developer/RiderLink/Source/RD/thirdparty/clsocket/src/ActiveSocket.h"
 #include "Kismet/GameplayStatics.h"
 
 void ATower::BeginPlay()
@@ -17,8 +18,18 @@ void ATower::BeginPlay()
 void ATower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(!Tank->IsTankAlive())
+	{
+		return;
+	}
 	
 	if(!IsTankInFireRange())
+	{
+		return;
+	}
+
+	if(!IsTankInLineOfSight())
 	{
 		return;
 	}
@@ -35,7 +46,12 @@ void ATower::HandleDestruction()
 
 void ATower::CheckFireCondition()
 {
-	if(IsTankInFireRange())
+	if(Tank == nullptr)
+	{
+		return;
+	}
+	
+	if(Tank->IsTankAlive() && IsTankInFireRange() && IsTankInLineOfSight())
 	{
 		Fire();	
 	}	
@@ -49,4 +65,15 @@ bool ATower::IsTankInFireRange()
 	}
 
 	return FireRange >= FVector::Dist(GetActorLocation(), Tank->GetActorLocation());
+}
+
+bool ATower::IsTankInLineOfSight()
+{
+	FHitResult HitResult;
+	if(!GetWorld()->LineTraceSingleByChannel(OUT HitResult, GetActorLocation(), Tank->GetActorLocation(), ECC_Visibility))
+	{
+		return false;
+	}
+
+	return HitResult.GetActor() == Tank;
 }

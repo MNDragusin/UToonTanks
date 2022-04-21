@@ -20,6 +20,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void HandleDestruction();
 	APlayerController* GetTankPlayerController() const;
+	bool IsTankAlive();
 	
 protected:
 	// Called when the game starts or when spawned
@@ -32,7 +33,6 @@ private:
 	class UCameraComponent* CameraComponent;
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	class USpringArmComponent* SpringArmComp;
-		
 	
 	UPROPERTY(EditAnywhere, Category="Attributes")
 	float MoveSpeed = 200.f;
@@ -46,4 +46,5 @@ private:
 	void Turn(float Value);
 	//members
 	APlayerController* TankPlyerController;
+	bool bIsAlive = true;
 };

@@ -38,4 +38,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Combat")
 	UParticleSystem* HitPArticles;
+
+	UPROPERTY(EditAnywhere, Category="Combat")
+	USoundBase* ImpactSound;
+
+	UPROPERTY(EditAnywhere, Category="Combat")
+	TSubclassOf<UCameraShakeBase> CameraShakeClass;
 };

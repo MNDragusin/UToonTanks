@@ -6,6 +6,7 @@
 #include "NavigationSystemTypes.h"
 #include "Components/CapsuleComponent.h"
 #include "Projectile.h"
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -33,6 +34,9 @@ ABasePawn::ABasePawn()
 	//Create a spawn point of type USceneComponent and attach it to the Gun
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Point"));
 	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
+
+	FireAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("Fire audio comp"));
+	FireAudioComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -67,12 +71,12 @@ void ABasePawn::Fire()
 		UE_LOG(LogTemp, Warning, TEXT("[%s] - There is no projectile class assigned!"), *GetOwner()->GetName());
 		return;
 	}
-
+	
+	FireAudioComp->Play();
 	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass,
 	                                                              ProjectileSpawnPoint->GetComponentLocation(),
 	                                                              ProjectileSpawnPoint->GetComponentRotation());
 	Projectile->SetOwner(this);
-	
 }
 
 void ABasePawn::HandleDestruction()
@@ -81,6 +85,14 @@ void ABasePawn::HandleDestruction()
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, DestroyParticleSystem, GetActorLocation(), GetActorRotation());	
 	}
-	
-	//TODO Visual / sound effect
+
+	if(DeathSound)
+	{
+		UGameplayStatics::SpawnSoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
+	}
+
+	if(DeathCameraShake)
+	{
+		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(DeathCameraShake);
+	}
 }

@@ -3,6 +3,7 @@
 
 #include "Projectile.h"
 
+#include "Components/AudioComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -14,7 +15,7 @@ AProjectile::AProjectile()
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
 	RootComponent = ProjectileMesh;
-
+		
 	ProjectileMovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile movement comp"));
 	ProjectileMovementComp->MaxSpeed = 6000.f;
 	ProjectileMovementComp->InitialSpeed = 5000.f;
@@ -49,6 +50,16 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 	
 	UGameplayStatics::ApplyDamage(OtherActor, Damage, myOwnerInstigator, this,DamageTypeClass);
 	UGameplayStatics::SpawnEmitterAtLocation(this, HitPArticles, GetActorLocation(), GetActorRotation());
+
+	if(ImpactSound != nullptr)
+	{
+		UGameplayStatics::SpawnSoundAtLocation(this, ImpactSound, GetActorLocation(),GetActorRotation());	
+	}
+
+	if(CameraShakeClass != nullptr)
+	{
+		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(CameraShakeClass);
+	}
 	
 	//Destroy projectile
 	Destroy();

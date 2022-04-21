@@ -24,7 +24,7 @@ public:
 private:
 	void CheckFireCondition();
 	bool IsTankInFireRange();
-	
+	bool IsTankInLineOfSight();
 	//members
 	class ATank* Tank;
 	FTimerHandle FireRateTimerHandle;
